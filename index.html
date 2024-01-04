@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Memory Allocation Simulator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: rgb(150, 138, 138);
+        margin: 0;
+        padding: 0;
+      }
+      .title {
+        text-align: center;
+        background-color: green;
+        padding: 10px;
+        color: white;
+      }
+      .choose-partition {
+        text-align: center;
+      }
+      #partitions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 20px;
+      }
+      .partitionType {
+        padding: 8px;
+        border-radius: 5px;
+        margin: 5px 0;
+        font-size: 14px;
+        color: #333; /* Dark text color */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Add a shadow */
+        outline: none;
+      }
+
+      .partitionType option {
+        background-color: green;
+        color: white;
+        font-size: 14px;
+      }
+      #partitionOptions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      #numPartitions,
+      #totalMemorySize {
+        padding: 10px;
+        border-radius: 5px;
+        width: 10rem;
+        margin: 10px 0;
+        font-size: 14px;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      #createPartitionsButton {
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-size: 14px;
+        background-color: green; /* Button color */
+        color: #fff; /* Text color */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #createPartitionsButton:hover {
+        background-color: white; /* Hovered button color */
+        color: green;
+      }
+
+      .memory-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 20px;
+      }
+
+      .partition {
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px;
+        width: calc(50% - 20px);
+        text-align: center;
+        position: relative;
+      }
+      .partition .name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .partition:nth-child(2) {
+        background-color: red;
+      }
+      .partition:nth-child(3) {
+        background-color: green;
+      }
+      .partition:nth-child(4) {
+        background-color: blue;
+      }
+      .partition:nth-child(5) {
+        background-color: orange;
+      }
+      .partition:nth-child(6) {
+        background-color: purple;
+      }
+      .process {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        text-align: center;
+        color: white;
+      }
+      .os-partition {
+        background-color: yellow !important;
+      }
+
+      /* Process Input Styling */
+      #processInput {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      #processSize,
+      #processPartition {
+        margin: 5px;
+        padding: 8px;
+        border-radius: 5px;
+        font-size: 14px;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      #allocateProcessButton {
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-size: 14px;
+        background-color: green; /* Button color */
+        color: #fff; /* Text color */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #allocateProcessButton:hover {
+        background-color: white;
+        color: green;
+      }
+      @media (max-width: 600px) {
+        .partition {
+          width: 80%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Fixed Memory Allocation Methods</h1>
+    <div class="choose-partition">
+      <label>Choose Partition Type:</label>
+      <select
+        class="partitionType"
+        id="partitionType"
+        onchange="partitionTypeChanged()"
+      >
+        <option value="">Select Option</option>
+        <option value="equal">Equal Size</option>
+        <option value="unequal">Unequal Size</option>
+      </select>
+    </div>
+    <div id="partitionOptions"></div>
+    <div class="memory-container" id="partitions"></div>
+    <div id="processInput" style="display: none">
+      <label>Enter Process Size:</label>
+      <input type="number" id="processSize" />
+      <label>Select Partition:</label>
+      <select id="processPartition"></select>
+      <button id="allocateProcessButton" onclick="allocateProcess()">
+        Allocate Process
+      </button>
+    </div>
+    <div id="alertArea"></div>
+
+    <script>
+      let partitions = [];
+      let totalPartitions = 0;
+      let totalMemorySize = 0;
+      const osMemorySize = 50;
+      let processCounter = 0;
+
+      function partitionTypeChanged() {
+        let type = document.getElementById('partitionType').value;
+        document.getElementById('partitionOptions').innerHTML = '';
+        document.getElementById('partitions').innerHTML = '';
+        document.getElementById('processInput').style.display = 'none';
+        partitions = [];
+
+        if (type === 'equal' || type === 'unequal') {
+          let html =
+            '<label>Enter Number of Partitions:</label>' +
+            '<input type="number" id="numPartitions" min="1" max="5" />' +
+            '<label>Enter Total Memory Size:</label>' +
+            '<input type="number" id="totalMemorySize" />' +
+            '<button id="createPartitionsButton" onclick="createPartitions(\'' +
+            type +
+            '\')">Create Partitions</button>';
+          document.getElementById('partitionOptions').innerHTML = html;
+        }
+      }
+
+      function createPartitions(type) {
+        let numPartitions = parseInt(
+          document.getElementById('numPartitions').value
+        );
+        totalMemorySize =
+          parseInt(document.getElementById('totalMemorySize').value) -
+          osMemorySize;
+        if (
+          numPartitions <= 0 ||
+          numPartitions > 5 ||
+          isNaN(numPartitions) ||
+          isNaN(totalMemorySize)
+        ) {
+          alert('Please enter 5 or less than 5 partitions ');
+          return;
+        }
+
+        totalPartitions = numPartitions;
+        let partitionsDiv = document.getElementById('partitions');
+        partitionsDiv.innerHTML = '';
+        partitions = [];
+
+        let totalAllocated = 0;
+        for (let i = 0; i < numPartitions; i++) {
+          let size;
+          if (type === 'equal') {
+            size = Math.floor(totalMemorySize / numPartitions);
+          } else {
+            size = parseInt(prompt('Enter size for partition ' + (i + 1)));
+            if (
+              isNaN(size) ||
+              size <= 0 ||
+              totalAllocated + size > totalMemorySize
+            ) {
+              alert(
+                'Invalid partition size. Exceeds available memory. Page will reload.'
+              );
+              location.reload();
+              return;
+            }
+          }
+          totalAllocated += size;
+          partitions.push({ size: size, process: null });
+
+          let partitionDiv = document.createElement('div');
+          partitionDiv.className = 'partition';
+          partitionDiv.id = 'partition' + i;
+          partitionDiv.innerHTML =
+            '<div class="name">Partition ' + (i + 1) + ' (' + size + ')</div>';
+          partitionsDiv.appendChild(partitionDiv);
+        }
+
+        // OS Partition
+        let osPartitionDiv = document.createElement('div');
+        osPartitionDiv.className = 'partition os-partition';
+        osPartitionDiv.innerHTML =
+          '<div class="name">OS Partition (' + osMemorySize + ')</div>';
+        document
+          .getElementById('partitions')
+          .insertBefore(
+            osPartitionDiv,
+            document.getElementById('partitions').firstChild
+          );
+
+        populateProcessPartitionSelect();
+        document.getElementById('processInput').style.display = 'flex';
+      }
+
+      function populateProcessPartitionSelect() {
+        let select = document.getElementById('processPartition');
+        select.innerHTML = '';
+        partitions.forEach((partition, index) => {
+          let option = document.createElement('option');
+          option.value = index;
+          option.textContent = 'Partition ' + (index + 1);
+          select.appendChild(option);
+        });
+      }
+
+      function allocateProcess() {
+        let processSize = parseInt(
+          document.getElementById('processSize').value
+        );
+        let selectedPartitionIndex = parseInt(
+          document.getElementById('processPartition').value
+        );
+
+        if (
+          isNaN(processSize) ||
+          selectedPartitionIndex < 0 ||
+          selectedPartitionIndex >= partitions.length
+        ) {
+          alert('please enter process size.');
+          return;
+        }
+
+        let selectedPartition = partitions[selectedPartitionIndex];
+        if (selectedPartition.process) {
+          alert('This partition already has a process allocated.');
+          return;
+        }
+
+        if (processSize > selectedPartition.size) {
+          alert('Process size is too large for the selected partition.');
+          return;
+        }
+
+        selectedPartition.process = processSize;
+        let processDiv = document.createElement('div');
+        processDiv.className = 'process';
+        processDiv.style.height =
+          (processSize / selectedPartition.size) * 100 + '%';
+
+        processDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+
+        processCounter++;
+        processDiv.innerHTML =
+          'Process ' + processCounter + ' (' + processSize + ')';
+        document
+          .getElementById('partition' + selectedPartitionIndex)
+          .appendChild(processDiv);
+      }
+    </script>
+  </body>
+</html>
