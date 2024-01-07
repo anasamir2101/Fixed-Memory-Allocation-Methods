@@ -10,14 +10,44 @@
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Fixed Memory Allocation</h2>
         <p>
-          In fixed memory allocation, the memory is divided into fixed-sized
-          partitions. Each partition can hold exactly one process. When a
-          process needs to be loaded into memory, it is placed into a free
-          partition that is large enough to accommodate it.
+          First step is to select whether we want to perform Fixed Partitioning
+          for Equal Size or Unequal Size. After that, we will enter the number
+          of partitions, which can range from 1 to 5. After entering the number
+          of partitions, we will input the memory size. The memory size should
+          be 55 or more because we have allocated 50 units of memory for the OS.
+          If we enter the wrong number of partitions or size, an alert function
+          will be called. After entering the partitions and memory size, we will
+          click the 'Create Partitions' button to create the partitions
         </p>
-        <p><b>Equal Size:</b> All partitions are of equal size.</p>
-        <p><b>Unequal Size:</b> Partitions can be of different sizes.</p>
-        <button onclick="closeModal()">Got it</button>
+        <p>
+          <b>Equal Size:</b>If we have selected 'Equal Size,' partitions will be
+          created automatically. All partitions are of equal size.
+        </p>
+        <p>
+          <b>Unequal Size:</b>If we select 'Unequal Size,' we will manually
+          enter the size for each partition, and the partitions will be created
+          accordingly. If the sum of partition sizes exceeds the memory size, an
+          alert will be displayed, and the page will be refreshed. Partitions
+          can be of different sizes.
+        </p>
+        <p>
+          Afterward, we will allocate a process. We can only allocate one
+          process to a single partition. If we assign a process size larger than
+          the partition size, it will display an error Subsequently, we can also
+          deallocate a process if a partition has a process allocated to it
+        </p>
+        <button id="downloadButton" onclick="downloadTutorial()">
+          Download Tutorial Document
+        </button>
+        <button id="code-link">
+          <a
+            href="https://github.com/anasamir2101/Fixed-Memory-Allocation-Methods"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Open Code</a
+          >
+        </button>
+        <button class="gotit-btn" onclick="closeModal()">I understood</button>
       </div>
     </div>
 
@@ -47,7 +77,7 @@
     <div id="partitionOptions"></div>
     <div class="memory-container" id="partitions"></div>
     <div id="processInput" style="display: none">
-      <label>Enter Process Size:</label>
+      <label>Allocate Process</label>
       <input type="number" id="processSize" />
       <label>Select Partition:</label>
       <select id="processPartition"></select>
@@ -55,8 +85,13 @@
         Allocate Process
       </button>
     </div>
-    <div id="alertArea"></div>
-
+    <div id="deallocateProcessInput" style="display: none">
+      <label>Deallocate Process:</label>
+      <select id="deallocateProcessPartition"></select>
+      <button id="deallocateProcessButton" onclick="deallocateProcess()">
+        Deallocate Process
+      </button>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>

@@ -97,14 +97,25 @@ function createPartitions(type) {
 }
 
 function populateProcessPartitionSelect() {
-  let select = document.getElementById('processPartition');
-  select.innerHTML = '';
+  let allocateSelect = document.getElementById('processPartition');
+  let deallocateSelect = document.getElementById('deallocateProcessPartition');
+
+  allocateSelect.innerHTML = '';
+  deallocateSelect.innerHTML = '';
+
   partitions.forEach((partition, index) => {
-    let option = document.createElement('option');
-    option.value = index;
-    option.textContent = 'Partition ' + (index + 1);
-    select.appendChild(option);
+    let allocateOption = document.createElement('option');
+    allocateOption.value = index;
+    allocateOption.textContent = 'Partition ' + (index + 1);
+    allocateSelect.appendChild(allocateOption);
+
+    let deallocateOption = document.createElement('option');
+    deallocateOption.value = index;
+    deallocateOption.textContent = 'Partition ' + (index + 1);
+    deallocateSelect.appendChild(deallocateOption);
   });
+
+  document.getElementById('deallocateProcessInput').style.display = 'flex';
 }
 
 function allocateProcess() {
@@ -118,7 +129,7 @@ function allocateProcess() {
     selectedPartitionIndex < 0 ||
     selectedPartitionIndex >= partitions.length
   ) {
-    alert('please enter process size.');
+    alert('Please enter a valid process size.');
     return;
   }
 
@@ -137,12 +148,77 @@ function allocateProcess() {
   let processDiv = document.createElement('div');
   processDiv.className = 'process';
   processDiv.style.height = (processSize / selectedPartition.size) * 100 + '%';
-
   processDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-
   processCounter++;
   processDiv.innerHTML = 'Process ' + processCounter + ' (' + processSize + ')';
   document
     .getElementById('partition' + selectedPartitionIndex)
     .appendChild(processDiv);
+
+  populateProcessPartitionSelect();
+}
+
+function deallocateProcess() {
+  let selectedPartitionIndex = parseInt(
+    document.getElementById('deallocateProcessPartition').value
+  );
+
+  if (
+    isNaN(selectedPartitionIndex) ||
+    selectedPartitionIndex < 0 ||
+    selectedPartitionIndex >= partitions.length
+  ) {
+    alert('Please select a valid partition for deallocation.');
+    return;
+  }
+
+  let selectedPartition = partitions[selectedPartitionIndex];
+  if (!selectedPartition.process) {
+    alert('No process to deallocate in this partition.');
+    return;
+  }
+
+  selectedPartition.process = null;
+
+  let partitionDiv = document.getElementById(
+    'partition' + selectedPartitionIndex
+  );
+  let processDiv = partitionDiv.querySelector('.process');
+  partitionDiv.removeChild(processDiv);
+
+  populateProcessPartitionSelect();
+}
+function downloadTutorial() {
+  const filename = 'tutorial.txt';
+  const link = document.createElement('a');
+  link.download = filename;
+  const blob = new Blob(
+    [
+      `First step is to select whether we want to perform Fixed Partitioning for Equal Size or Unequal Size. 
+After that, we will enter the number of partitions, which can range from 1 to 5.
+ After entering the number of partitions, we will input the memory size. The memory size should be 55 or more
+ because we have allocated 50 units of memory for the OS.If we enter the wrong number of partitions or size, 
+an alert function  will be called. 
+After entering the partitions and memory size, we will click the 'Create Partitions' button to create the partitions
+
+Equal Size: If we have selected 'Equal Size,' partitions will be created automatically. All partitions are of equal size.
+
+Unequal Size: If we select 'Unequal Size,' we will manually enter the size for each partition, and the partitions will be created
+accordingly. If the sum of partition sizes exceeds the memory size, an alert will be displayed, and the page will be refreshed.
+Partitions can be of different sizes.
+
+Afterward, we will allocate a process. We can only allocate one process to a single partition. If we assign a process size larger than
+the partition size, it will display an error Subsequently, we can also deallocate a process if a partition has a process allocated to it`,
+    ],
+    {
+      type: 'application/txt',
+    }
+  );
+  link.href = window.URL.createObjectURL(blob);
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
 }
