@@ -229,12 +229,15 @@ a:hover {
 #downloadButton {
   border-radius: 5px;
   padding: 5px 10px;
-  border: 2px solid #ff9800;
-  background-color: #b80000;
+  border: none;
+  outline: none;
+  background-color: var(--dark-blue);
   color: white;
+  padding: 10px;
   margin-top: 10px;
   cursor: pointer;
 }
+
 .gotit-btn:hover,
 #code-link:hover,
 #downloadButton:hover {
