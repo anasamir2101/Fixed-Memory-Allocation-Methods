@@ -157,6 +157,19 @@ function allocateProcess() {
 
   populateProcessPartitionSelect();
 }
+function calculateInternalFragmentation() {
+  let totalInternalFragmentation = 0;
+
+  for (let i = 0; i < totalPartitions; i++) {
+    let partition = partitions[i];
+    if (partition.process) {
+      let internalFragmentation = partition.size - partition.process;
+      totalInternalFragmentation += internalFragmentation;
+    }
+  }
+
+  alert('Total Internal Fragmentation: ' + totalInternalFragmentation);
+}
 
 function deallocateProcess() {
   let selectedPartitionIndex = parseInt(
@@ -208,7 +221,12 @@ accordingly. If the sum of partition sizes exceeds the memory size, an alert wil
 Partitions can be of different sizes.
 
 Afterward, we will allocate a process. We can only allocate one process to a single partition. If we assign a process size larger than
-the partition size, it will display an error Subsequently, we can also deallocate a process if a partition has a process allocated to it`,
+the partition size, it will display an error Subsequently, we can also deallocate a process if a partition has a process allocated to it
+
+Developed By
+Shehryar Sohail (21-CS-39)
+M Anas Amir (21-CS-66)
+Kamran Arif (21-CS-129)`,
     ],
     {
       type: 'application/txt',

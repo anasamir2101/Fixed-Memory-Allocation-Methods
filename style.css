@@ -1,3 +1,10 @@
+:root {
+  --background: #dcf2f1;
+  --header: #7fc7d9;
+  --dark-blue: #365486;
+  --dark: #0f1035;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,7 +12,8 @@
 }
 body {
   font-family: Arial, sans-serif;
-  background-color: #e36414;
+  font-weight: bold;
+  background-color: var(--background);
   margin: 0;
   padding: 0;
 }
@@ -22,8 +30,8 @@ body {
 }
 
 .modal-content {
-  background-color: #ff9800;
-  color: black;
+  background-color: var(--dark);
+  color: var(--background);
   margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
@@ -47,7 +55,7 @@ body {
 }
 .title {
   text-align: center;
-  background-color: #ff9800;
+  background-color: var(--header);
   padding: 10px;
   color: black;
   margin-bottom: 10px;
@@ -81,9 +89,6 @@ body {
   text-align: center;
   margin-left: 45%;
   margin-right: 45%;
-  /* margin-left: 30px; */
-  /* width: 30%; */
-  /* display: flex; */
   flex-direction: column;
 }
 .partitionType option {
@@ -107,13 +112,22 @@ body {
   font-size: 14px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
-
-#createPartitionsButton {
+.fragmentation {
   padding: 10px;
   border-radius: 5px;
   margin: 10px 0;
   font-size: 14px;
   background-color: #ff9800;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+#createPartitionsButton {
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-size: 14px;
+  background-color: var(--dark);
   color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -146,18 +160,23 @@ body {
 }
 .partition:nth-child(2) {
   background-color: red;
+  color: #fff;
 }
 .partition:nth-child(3) {
   background-color: green;
+  color: #fff;
 }
 .partition:nth-child(4) {
   background-color: blue;
+  color: #fff;
 }
 .partition:nth-child(5) {
-  background-color: orange;
+  background-color: var(--dark-blue);
+  color: #fff;
 }
 .partition:nth-child(6) {
   background-color: purple;
+  color: #fff;
 }
 .process {
   position: absolute;

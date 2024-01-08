@@ -36,6 +36,14 @@
           the partition size, it will display an error Subsequently, we can also
           deallocate a process if a partition has a process allocated to it
         </p>
+        <p>
+          <b>
+            Developed By:<br />
+            1:Shehryar Sohail (21-CS-39) <br />
+            2:M Anas Amir (21-CS-66)<br />
+            3:Kamran Arif (21-CS-129)
+          </b>
+        </p>
         <button id="downloadButton" onclick="downloadTutorial()">
           Download Tutorial Document
         </button>
@@ -84,7 +92,11 @@
       <button id="allocateProcessButton" onclick="allocateProcess()">
         Allocate Process
       </button>
+      <button class="fragmentation" onclick="calculateInternalFragmentation()">
+        Calculate Internal Fragmentation
+      </button>
     </div>
+
     <div id="deallocateProcessInput" style="display: none">
       <label>Deallocate Process:</label>
       <select id="deallocateProcessPartition"></select>
